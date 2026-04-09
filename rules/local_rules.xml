@@ -1,0 +1,60 @@
+<group name="myapp,authentication_failed,">
+
+  <rule id="100005" level="6">
+    <decoded_as>myapp_login_fail</decoded_as>
+    <description>MyApp: Failed login from $(srcip)</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+  </rule>
+
+  <rule id="100006" level="10" frequency="5" timeframe="120">
+    <if_matched_sid>100005</if_matched_sid>
+    <same_srcip />
+    <description>MyApp: Brute force attack from $(srcip)</description>
+    <mitre>
+      <id>T1110.001</id>
+    </mitre>
+  </rule>
+
+</group>
+
+<group name="ransomware,attack_simulation,">
+
+  <rule id="100010" level="12">
+    <if_sid>550,554</if_sid>
+    <match>\.encrypted</match>
+    <description>Ransomware: File encryption detected - $(file)</description>
+    <mitre>
+      <id>T1486</id>
+    </mitre>
+  </rule>
+
+  <rule id="100011" level="12">
+    <if_sid>550,554</if_sid>
+    <match>/etc/shadow</match>
+    <description>Ransomware: Credential file accessed</description>
+    <mitre>
+      <id>T1003</id>
+    </mitre>
+  </rule>
+
+  <rule id="100012" level="15">
+    <if_sid>550,554</if_sid>
+    <match>syslog</match>
+    <description>Ransomware: System log cleared</description>
+    <mitre>
+      <id>T1070</id>
+    </mitre>
+  </rule>
+
+  <rule id="100013" level="12">
+    <if_sid>550,554</if_sid>
+    <match>/tmp/passwd_dump</match>
+    <description>Ransomware: Password file dumped</description>
+    <mitre>
+      <id>T1003</id>
+    </mitre>
+  </rule>
+
+</group>
