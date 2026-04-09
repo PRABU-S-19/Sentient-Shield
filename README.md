@@ -1,13 +1,13 @@
 # 🛡️ Sentient Shield — Enterprise EDR & Threat Hunting Grid
 
 ![Wazuh](https://img.shields.io/badge/Wazuh-4.7.5-blue)
-![Status](https://img.shields.io/badge/Status-Active-green)
-![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey)
+![Status](https://img.shields.io/badge/Status-Complete-green)
 ![MITRE](https://img.shields.io/badge/MITRE-ATT%26CK-red)
+![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey)
 
-> **Project 2 — Infotact Solutions CDOC (Blue Team Alpha)**  
-> Built a centralized, real-time SOC EDR grid using Wazuh SIEM to detect 
-> threats, monitor file integrity, and map adversary tactics to MITRE ATT&CK.
+> **Project 2 — Infotact Solutions CDOC (Blue Team Alpha)**
+> Enterprise-grade SOC EDR grid using Wazuh SIEM for real-time 
+> threat detection, FIM, active response, and threat simulation.
 
 ---
 
@@ -20,169 +20,203 @@
 | **Team** | Blue Team Alpha |
 | **Role** | Security Operations Trainee |
 | **Duration** | 4 Weeks |
-| **Status** | Weeks 1 & 2 Complete ✅ |
+| **Status** | ✅ Complete |
 
 ---
 
 ## 🎯 Problem Statement
 
-Infotact's servers are under constant brute-force and ransomware attacks.
-The organization needed a centralized, real-time system to:
-- Detect file integrity violations
-- Monitor critical registry keys
-- Map adversary tactics to MITRE ATT&CK
-- Execute automated active response actions
+Infotact's servers face constant brute-force attacks and ransomware 
+threats. Required a centralized real-time system to:
+- Detect file integrity violations instantly
+- Monitor critical system files 24/7
+- Auto-respond to brute force attacks
+- Map threats to MITRE ATT&CK framework
+- Simulate and detect ransomware kill chains
 
----
 ┌─────────────────────────────────────────────┐
 │              VIRTUALBOX LAB                 │
 │                                             │
 │  ┌──────────────────┐  ┌─────────────────┐  │
 │  │  Wazuh Manager   │  │ Windows Server  │  │
 │  │  Ubuntu 22.04    │  │  2019 Eval      │  │
-│  │  IP:192.168.56.104│  │ IP:192.168.56.107│ │
+│  │  192.168.56.104  │  │ 192.168.56.107  │  │
 │  │  - SIEM Backend  │  │  - Wazuh Agent  │  │
 │  │  - Rules Engine  │  └─────────────────┘  │
 │  │  - Dashboard     │  ┌─────────────────┐  │
 │  └──────────────────┘  │  Linux WebServer│  │
 │                        │  Ubuntu 24.04   │  │
 │                        │  - Wazuh Agent  │  │
-│                        │  - Apache/Nginx │  │
+│                        │  - SSH Server   │  │
 │                        └─────────────────┘  │
 └─────────────────────────────────────────────┘
-
-## 🏗️ Architecture
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Tool | Purpose |
-|---|---|
-| **Wazuh 4.7.5** | SIEM/EDR Platform |
-| **VirtualBox** | Virtualization |
-| **Ubuntu 22.04/24.04** | Linux Endpoints |
-| **Windows Server 2019** | Windows Endpoint |
-| **OpenSearch** | Log Indexing |
-| **Wazuh Dashboard** | Visualization |
+| Tool | Version | Purpose |
+|---|---|---|
+| **Wazuh** | 4.7.5 | SIEM/EDR Platform |
+| **VirtualBox** | Latest | Virtualization |
+| **Ubuntu** | 22.04/24.04 | Linux Endpoints |
+| **Windows Server** | 2019 | Windows Endpoint |
+| **OpenSearch** | Latest | Log Indexing |
+| **Hydra** | 9.5 | Brute Force Simulation |
+| **Atomic Red Team** | Latest | Threat Simulation |
 
 ---
 
-## 📅 Sprint Progress
+## 📅 Sprint Results
 
 ### ✅ Week 1 — Infrastructure & Agent Deployment
 
 **Objective:** Deploy Wazuh Manager and connect all agents
 
-**What I Did:**
+**Completed:**
 - Deployed Wazuh Manager on Ubuntu using all-in-one installer
-- Configured Host-Only network for isolated lab environment
-- Deployed Wazuh agents on Linux Web Server and Windows Server
-- Verified 100% agent coverage with Active status
+- Configured isolated Host-Only network environment
+- Deployed Wazuh agents on Linux WebServer and Windows Server
+- Achieved 100% agent coverage
 
-**Gate Check Result:** ✅ PASSED
+**Gate Check:** ✅ PASSED
 
-Agent 001: Windows-Server  → Active ✅
-Agent 002: Linux-WebServer → Active ✅
+Agent 001: Windows-Server  (192.168.56.107) → Active ✅
+Agent 002: Linux-WebServer (192.168.56.110) → Active ✅
 Coverage: 100%
 
 ---
 
 ### ✅ Week 2 — Detection Rules & Logic
 
-**Objective:** Configure FIM, custom rules, and vulnerability detection
+**Objective:** Configure FIM, custom rules, vulnerability detection
 
-#### 🔍 File Integrity Monitoring (FIM)
-- Configured real-time monitoring on critical directories:
-  - `/etc` — System configuration
-  - `/usr/bin` — System executables  
-  - `/usr/sbin` — System admin tools
-  - `/var/www/html` — Web application files
-- Uses Linux **inotify** for instant detection
-- Alerts generated within **5 seconds** of file change
+#### File Integrity Monitoring
+- Real-time monitoring on critical directories
+- Uses Linux inotify for instant detection
+- Alerts within 5 seconds of file change
 
-**Gate Check Result:** ✅ PASSED
+**Monitored Directories:**
+/etc          → System configuration
+/usr/bin      → System executables
+/usr/sbin     → Admin tools
+/var/www/html → Web application files
+/var/log      → System logs
+/tmp          → Temporary files
 
-Alert: /etc/fim_test_file — File added    Level 5 ✅
-Alert: /etc/fim_test_file — Modified     Level 7 ✅
-
-
-#### 📝 Custom Decoder & Rules
-- Wrote custom XML decoder for proprietary application logs
-- Created detection rules mapped to MITRE ATT&CK:
+#### Custom Detection Rules
 
 | Rule ID | Level | Description | MITRE |
 |---|---|---|---|
-| 100005 | 6 | Authentication failure detected | T1110 |
-| 100006 | 10 | Brute force attack detected | T1110.001 |
+| 100005 | 6 | Authentication failure | T1110 |
+| 100006 | 10 | Brute force detected | T1110.001 |
+| 100010 | 12 | File encryption detected | T1486 |
+| 100011 | 12 | Credential file accessed | T1003 |
+| 100012 | 15 | System log cleared | T1070 |
+| 100013 | 12 | Password file dumped | T1003 |
 
-#### 🔒 Vulnerability Detector
-- Enabled automated CVE scanning on all agents
-- Configured feeds: Canonical (Ubuntu) + NVD (Windows)
-- Scan interval: 5 minutes (lab) / 6 hours (production)
+#### Vulnerability Detector
+- Automated CVE scanning on all agents
+- Feeds: Canonical (Ubuntu) + NVD
+- Scan interval: 5 minutes
 
----
+**Gate Check:** ✅ PASSED
 
-## 📊 Dashboard Screenshots
-
-> *(Add your screenshots here)*
-
-### Agents Overview
-![Agents](screenshots/agents.png)
-
-### FIM Alerts
-![FIM](screenshots/fim.png)
-
-### Security Events
-![Events](screenshots/events.png)
+FIM alert generated within 5 seconds ✅
+Custom rules firing correctly ✅
+Vulnerability detector enabled ✅
 
 ---
 
-## 🗂️ Repository Structure
-Sentient-Shield/
-│
-├── README.md
-├── configs/
-│   ├── agent-ossec.conf        # Agent configuration
-│   ├── manager-ossec.conf      # Manager configuration
-│   └── vulnerability-detector.conf
-├── rules/
-│   └── local_rules.xml         # Custom detection rules
-├── decoders/
-│   └── local_decoder.xml       # Custom log decoders
-└── screenshots/
-├── agents.png
-├── fim.png
-└── events.png
+### ✅ Week 3 — Active Response (IPS)
+
+**Objective:** Auto-ban brute force attackers
+
+**Scenario:**
+Attacker → SSH Brute Force → Wazuh Detects → IP Banned!
+
+**Configuration:**
+- Rule 5763 triggers firewall-drop command
+- Timeout: 3600 seconds (1 hour ban)
+- Location: Local (on affected endpoint)
+
+**Gate Check:** ✅ PASSED
+```bash
+# Attacker IP automatically banned:
+DROP  192.168.56.110  ← Confirmed in iptables ✅
+```
+
+---
+
+### ✅ Week 4 — Threat Simulation
+
+**Objective:** Simulate ransomware kill chain and visualize
+
+**Simulated Techniques:**
+
+| Technique | ID | Simulation Method |
+|---|---|---|
+| Log Clearing | T1070 | Cleared /var/log/syslog |
+| Credential Dump | T1003 | Accessed /etc/shadow |
+| File Encryption | T1486 | Renamed files to .encrypted |
+| Backup Deletion | T1490 | Deleted .bak files |
+| Password Dump | T1003 | Copied /etc/passwd |
+
+**Gate Check:** ✅ PASSED
+
+Kill chain visualized in dashboard ✅
+All techniques detected ✅
+Executive report generated ✅
 
 ---
 
 ## 🎯 MITRE ATT&CK Coverage
 
-| Technique | ID | Detection Method |
-|---|---|---|
-| Brute Force | T1110 | Custom Rule 100005 |
-| Password Guessing | T1110.001 | Custom Rule 100006 |
-| Data Manipulation | T1565 | FIM Monitoring |
-| File Deletion | T1107 | FIM Real-time |
+| Technique | ID | Detection | Response |
+|---|---|---|---|
+| Brute Force | T1110 | Rule 100005 | Auto-ban IP |
+| Password Guessing | T1110.001 | Rule 100006 | Auto-ban IP |
+| Credential Dumping | T1003 | Rule 100011 | Alert Level 12 |
+| File Encryption | T1486 | Rule 100010 | Alert Level 12 |
+| Log Clearing | T1070 | Rule 100012 | Alert Level 15 |
+| Data Manipulation | T1565 | FIM | Alert Level 7 |
 
 ---
 
-## 📈 Coming Next
+## 📁 Repository Structure
 
-- ⬜ Week 3: Active Response — Auto-ban brute force IPs
-- ⬜ Week 4: Threat Simulation — Atomic Red Team
+Sentient-Shield/
+│
+├── README.md
+├── configs/
+│   ├── agent-ossec.conf
+│   └── manager-ossec.conf
+├── rules/
+│   └── local_rules.xml
+├── decoders/
+│   └── local_decoder.xml
+└── screenshots/
+├── agents-active.png
+├── fim-alerts.png
+├── security-events.png
+├── active-response.png
+└── kill-chain.png
 
 ---
 
 ## 👨‍💻 Author
 
-**Prabu**  
-Security Operations Trainee — Blue Team Alpha  
-Infotact Solutions CDOC  
+**Prabu S**
+Security Operations Trainee — Blue Team Alpha
+Infotact Solutions CDOC
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/prabu-cybersecurity-s)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://linkedin.com/in/prabu-cybersecurity-s)
 
 ---
 
 *"Trust No One. Verify Everything."*
+
+
+---
+
+## 🏗️ Architecture
